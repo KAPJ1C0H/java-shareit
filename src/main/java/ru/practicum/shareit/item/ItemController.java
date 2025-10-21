@@ -1,57 +1,49 @@
 package ru.practicum.shareit.item;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 
-import java.validation.Valid;
-import java.validation.constraints.NotNull;
-import java.util.List;
-
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/items")
-@Slf4j
-@Validated
+@RequiredArgsConstructor
 public class ItemController {
-
-    ItemService itemService;
-
-    @Autowired
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
-    }
+    private final ItemService itemService;
 
     @GetMapping
-    public List<Item> getItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("поулчен запрос GET /items");
-        return itemService.getItemsByUserId(userId);
+    public Collection<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.getAll(userId);
     }
 
-    @GetMapping("/{itemId}")
-    public Item getItemById(@PathVariable(required = false) @NotNull Long itemId) {
-        log.info("поулчен запрос GET /items/id");
-        return itemService.getItemById(itemId);
+    @GetMapping("/{id}")
+    public ItemDto getById(@PathVariable("id") long id) {
+        return itemService.getById(id);
+    }
+
+    @PostMapping
+    public ItemDto save(@RequestHeader("X-Sharer-User-Id") long userId, @Valid @RequestBody ItemDto itemDto) {
+        return itemService.save(userId, itemDto);
+    }
+
+    @PatchMapping("/{id}")
+    public ItemDto update(@RequestHeader("X-Sharer-User-Id") long userId,
+                          @PathVariable("id") long id,
+                          @Valid @RequestBody ItemUpdateDto itemDto) {
+
+        return itemService.update(userId, id, itemDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable("id") long id) {
+        itemService.delete(id);
     }
 
     @GetMapping("/search")
-    public List<Item> getItemById(@RequestParam String text) {
-        log.info("поулчен запрос GET /items/search");
-        return itemService.getItemsByTextSearch(text);
-    }
-
-    @PostMapping()
-    public Item create(@RequestBody @Valid ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("поулчен запрос POST /items");
-        return itemService.create(itemDto, userId);
-    }
-
-    @PatchMapping("/{itemId}")
-    public Item update(@PathVariable @NotNull Long itemId, @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.debug("поулчен запрос PATCH /items");
-        return itemService.update(itemId, itemDto, userId);
+    public Collection<ItemDto> search(@RequestParam("text") String text) {
+        return itemService.search(text);
     }
 }

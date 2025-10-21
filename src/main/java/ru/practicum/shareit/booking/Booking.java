@@ -1,30 +1,17 @@
 package ru.practicum.shareit.booking;
 
-import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.enums.BookStatus;
 
-import java.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-
 @Data
-@Builder
 public class Booking {
-
-    private Long id;
-
-    @NotBlank
-    private String name;
-
-    private LocalDateTime start;
-
-    private LocalDateTime end;
-
-    private Item item;
-
-    private User booker;
-
-    private Status status;
+    private long id;
+    private long bookUser;
+    private long ownerId;
+    private long itemId;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private BookStatus status;
 }

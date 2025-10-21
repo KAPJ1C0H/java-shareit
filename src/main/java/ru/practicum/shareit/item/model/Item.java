@@ -2,15 +2,14 @@ package ru.practicum.shareit.item.model;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.request.ItemRequest;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 public class Item {
-    private long id;
+    private Long id;
+    private long ownerId;
+    private int beenOnLoan;
     private String name;
     private String description;
     private Boolean available;
-    private Long ownerId;
-    private ItemRequest request;
 }

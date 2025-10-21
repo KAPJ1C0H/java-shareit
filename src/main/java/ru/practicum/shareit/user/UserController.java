@@ -1,58 +1,46 @@
 package ru.practicum.shareit.user;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
-import java.validation.Valid;
-import java.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/users")
-@Slf4j
-@Validated
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-
-    UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
+    private final UserService userService;
 
     @GetMapping
-    public List<User> getUsers() {
-        log.info("поулчен запрос GET /users");
-        return userService.getUsers();
+    public Collection<UserDto> getAll() {
+        return userService.getAll().stream()
+                .map(UserMapper::toDto)
+                .collect(Collectors.toSet());
     }
 
-    @GetMapping("/{userId}")
-    public User getUsersById(@PathVariable(required = false) @NotNull Long userId) {
-        log.info("поулчен запрос GET /users/id");
-        return userService.getUsersById(userId);
+    @GetMapping("/{id}")
+    public UserDto getById(@PathVariable("id") long id) {
+        return UserMapper.toDto(userService.getById(id));
     }
 
-
-    @PostMapping()
-    public User create(@RequestBody @Valid UserDto userDto) {
-        log.info("поулчен запрос POST /users");
-        return userService.create(userDto);
+    @PostMapping
+    public UserDto add(@Valid @RequestBody User user) {
+        return UserMapper.toDto(userService.save(user));
     }
 
-    @PatchMapping("/{userId}")
-    public User update(@PathVariable @NotNull Long userId, @RequestBody UserDto userDto) {
-        log.debug("поулчен запрос PATCH /users");
-        return userService.update(userId, userDto);
+    @PatchMapping("/{id}")
+    public UserDto update(@PathVariable("id") long id, @Valid @RequestBody UserUpdateDto userUpdateDto) {
+        userUpdateDto.setId(id);
+        return UserMapper.toDto(userService.update(userUpdateDto));
     }
 
-    @DeleteMapping("/{userId}")
-    public void delete(@PathVariable @NotNull Long userId) {
-        log.debug("поулчен запрос DELETE /users");
-        userService.delete(userId);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable("id") long id) {
+        userService.delete(id);
     }
 }

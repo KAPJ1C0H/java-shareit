@@ -1,14 +1,16 @@
 package ru.practicum.shareit.request;
 
+import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.user.model.User;
 
-import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Data
+@Builder(toBuilder = true)
 public class ItemRequest {
     private long id;
-    private String description;
-    private User requestor;
-    private LocalDateTime created;
+    private long ownerId;
+    private String nameItem;
+    private String descriptionItem;
+    private Collection<Long> offersItemsId;
 }

@@ -1,80 +1,69 @@
 package ru.practicum.shareit.item;
 
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.NotFoundEntityException;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.exception.PermissionError;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.user.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.item.model.ItemMapper.dtoToItem;
-
-@Service("itemService")
-@Data
+@Service
+@RequiredArgsConstructor
 public class ItemService {
+    private final ItemRepository itemRepository;
 
-    ItemStorage itemStorage;
-    UserService userService;
-
-
-    @Autowired
-    public ItemService(@Qualifier("inMemoryItemStorage") ItemStorage itemStorage, UserService userService) {
-        this.itemStorage = itemStorage;
-        this.userService = userService;
+    public Collection<ItemDto> getAll(long userId) {
+        return itemRepository.getAllByOwnerId(userId).stream()
+                .map(ItemMapper::toDto)
+                .collect(Collectors.toSet());
     }
 
-    public ItemStorage getItemStorage() {
-        return itemStorage;
+    public ItemDto getById(long id) {
+        return ItemMapper.toDto(itemRepository.getById(id));
     }
 
-    public List<Item> getItemsByUserId(Long userId) {
-        return getItemStorage().getItemsByUserId(userId);
+    public ItemDto save(long userId, ItemDto itemDto) {
+
+        Item item = ItemMapper.fromDto(itemDto).toBuilder().ownerId(userId).build();
+        return ItemMapper.toDto(itemRepository.save(item));
     }
 
-    public Item getItemById(Long itemId) {
+    public ItemDto update(long userId,
+                          long id,
+                          ItemUpdateDto itemUpdateDto) {
 
-        return getItemStorage().getItem(itemId);
-    }
+        Item existingItem = itemRepository.getById(id);
 
-    public Item create(ItemDto itemDto, Long userId) {
-        if (!userService.getUserStorage().getUsersId().contains(userId)) {
-            throw new NotFoundEntityException();
+        if (existingItem.getOwnerId() != userId) {
+            throw new PermissionError("Only owner can update item");
         }
-        Item item = dtoToItem(null, itemDto, userId);
-        getItemStorage().save(item);
-        return item;
+
+        Item updatedItem = ItemMapper.fromUpdateDto(itemUpdateDto).toBuilder()
+                .id(existingItem.getId())
+                .ownerId(existingItem.getOwnerId())
+                .beenOnLoan(existingItem.getBeenOnLoan())
+                .build();
+
+        return ItemMapper.toDto(itemRepository.update(updatedItem));
     }
 
-    public Item update(Long id, ItemDto itemDto, Long userId) {
-        if (!Objects.equals(itemStorage.getItem(id).getOwner(), userId)) {
-            throw new NotFoundEntityException();
-        }
-        Item item = dtoToItem(id, itemDto, userId);
-        getItemStorage().update(id, item, userId);
-        return getItemStorage().getItem(id);
+
+    public void delete(long id) {
+        itemRepository.delete(id);
     }
 
-    public void delete(Long id) {
-        getItemStorage().delete(id);
-    }
-
-    public List<Item> getItemsByTextSearch(String text) {
-        List<Item> list = new ArrayList<>();
-        if (text.isBlank()) {
-            return list;
+    public Collection<ItemDto> search(String text) {
+        if (text == null || text.isBlank()) {
+            return Collections.emptyList();
         }
-        for (Item item : itemStorage.getItems()) {
-            if ((item.getAvailable()) && ((item.getDescription().toLowerCase().contains(text.toLowerCase())) || (item.getName().toLowerCase().contains(text.toLowerCase())))) {
-                list.add(item);
-            }
-        }
-        return list;
+        return itemRepository.search(text).stream()
+                .filter(Item::getAvailable) // Сравнение с ItemStatus.TRUE
+                .map(ItemMapper::toDto)
+                .collect(Collectors.toList());
     }
 }
