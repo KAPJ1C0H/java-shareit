@@ -1,39 +1,23 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.model.User;
 
-import java.validation.constraints.NotBlank;
-import java.validation.constraints.NotNull;
-import java.validation.constraints.Size;
-
+import javax.validation.constraints.NotBlank;
 
 @Data
+@AllArgsConstructor
+@Builder
 public class ItemDto {
-
-    private long id;
-
-    @NotBlank
+    @NotBlank(groups = {Create.class})
     private String name;
-
-    @Size(max = 200, message = "максимальная длина описания - 200 символов")
-    @NotBlank
+    @NotBlank(groups = {Create.class})
     private String description;
-    @NotNull
     private Boolean available;
-
-
-    private User owner;
-
+    private Long ownerId;
     private ItemRequest request;
-
-    public ItemDto(String name, String description, Boolean available, ItemRequest request) {
-        this.name = name;
-        this.description = description;
-        this.available = available;
-        this.request = request;
-    }
-
-
 }
+
+;
