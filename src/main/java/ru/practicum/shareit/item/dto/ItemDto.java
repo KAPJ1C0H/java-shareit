@@ -4,9 +4,9 @@ import lombok.Data;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.validation.constraints.NotBlank;
+import java.validation.constraints.NotNull;
+import java.validation.constraints.Size;
 
 
 @Data

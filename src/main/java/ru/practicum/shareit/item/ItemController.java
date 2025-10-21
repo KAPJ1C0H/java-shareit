@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import java.validation.Valid;
+import java.validation.constraints.NotNull;
 import java.util.List;
 
 

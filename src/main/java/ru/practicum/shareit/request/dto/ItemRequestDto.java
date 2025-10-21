@@ -2,7 +2,7 @@ package ru.practicum.shareit.request.dto;
 
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.constraints.Size;
+import java.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 public class ItemRequestDto {
