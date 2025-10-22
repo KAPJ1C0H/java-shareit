@@ -4,7 +4,7 @@ import ru.practicum.shareit.user.User;
 
 public class UserMapper {
 
-    public static UserDto toDto(User user) {
+    public static UserDto toBookingInfoDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -12,7 +12,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static UserDto toDtoFromUpdateDto(UserUpdateDto userUpdateDto) {
+    public static UserDto toBookingInfoDtoFromUpdateDto(UserUpdateDto userUpdateDto) {
         return UserDto.builder()
                 .id(userUpdateDto.getId())
                 .name(userUpdateDto.getName())

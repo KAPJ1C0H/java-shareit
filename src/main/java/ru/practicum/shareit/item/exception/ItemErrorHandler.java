@@ -16,4 +16,10 @@ public class ItemErrorHandler {
         return Map.of("On valid permission", e.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> itemNotFound(ItemNotFound e) {
+        return Map.of("Item not found", e.getMessage());
+    }
+
 }

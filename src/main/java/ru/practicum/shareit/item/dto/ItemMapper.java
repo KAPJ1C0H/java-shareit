@@ -4,7 +4,7 @@ import ru.practicum.shareit.item.model.Item;
 
 public class ItemMapper {
 
-    public static ItemDto toDto(Item item) {
+    public static ItemDto toBookingInfoDto(Item item) {
         return ItemDto.builder()
                 .ownerId(item.getOwnerId())
                 .id(item.getId())
