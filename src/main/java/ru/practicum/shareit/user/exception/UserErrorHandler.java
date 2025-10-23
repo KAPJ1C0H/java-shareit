@@ -21,4 +21,10 @@ public class UserErrorHandler {
     public Map<String, String> onValidEmail(OnValidEmail e) {
         return Map.of("On Valid email: ", e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> noValidUserId(UserNotFoundException e) {
+        return Map.of("User id is nor valid", e.getMessage());
+    }
 }

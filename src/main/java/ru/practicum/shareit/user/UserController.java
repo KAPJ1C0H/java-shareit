@@ -19,24 +19,24 @@ public class UserController {
     @GetMapping
     public Collection<UserDto> getAll() {
         return userService.getAll().stream()
-                .map(UserMapper::toDto)
+                .map(UserMapper::toBookingInfoDto)
                 .collect(Collectors.toSet());
     }
 
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable("id") long id) {
-        return UserMapper.toDto(userService.getById(id));
+        return UserMapper.toBookingInfoDto(userService.getById(id));
     }
 
     @PostMapping
     public UserDto add(@Valid @RequestBody User user) {
-        return UserMapper.toDto(userService.save(user));
+        return UserMapper.toBookingInfoDto(userService.save(user));
     }
 
     @PatchMapping("/{id}")
     public UserDto update(@PathVariable("id") long id, @Valid @RequestBody UserUpdateDto userUpdateDto) {
         userUpdateDto.setId(id);
-        return UserMapper.toDto(userService.update(userUpdateDto));
+        return UserMapper.toBookingInfoDto(userService.update(userUpdateDto));
     }
 
     @DeleteMapping("/{id}")
