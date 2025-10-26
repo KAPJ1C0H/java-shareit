@@ -22,11 +22,6 @@ public class ItemController {
         return itemService.getAll(userId);
     }
 
-//    @GetMapping("/{id}")
-//    public ItemDto getById(@PathVariable("id") long id) {
-//        return itemService.getById(id);
-//    }
-
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> addComment(@PathVariable("itemId") long itemId,
                                              @RequestBody CommentDto text,

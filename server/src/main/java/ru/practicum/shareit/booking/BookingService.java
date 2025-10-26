@@ -41,12 +41,6 @@ public class BookingService {
         if (item.getOwnerId() == userId) {
             throw new RuntimeException("Owner can't rent his item");
         }
-//        if (bookingDto.getEnd().isBefore(LocalDateTime.now())) {
-//            throw new InvalidFiledBooking("incorrect end or start time");
-//        }
-//        if (bookingDto.getStart().isBefore(LocalDateTime.now())) {
-//            throw new RuntimeException("Start time cannot be in the past");
-//        }
         if (bookingDto.getEnd().isBefore(bookingDto.getStart())) {
             throw new RuntimeException("End time cannot be earlier than start time");
         }
